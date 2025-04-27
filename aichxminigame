@@ -1,0 +1,16 @@
+{
+  "chat_id": "YOUR_CHAT_ID",
+  "text": "🎮 Let's play Rock Paper Scissors PvP!",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Play Now 🚀",
+          "web_app": {
+            "url": "https://your-project-name.vercel.app/"
+          }
+        }
+      ]
+    ]
+  }
+}
