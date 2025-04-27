@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors PvP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1 {
+      color: #0077cc;
+    }
+
+    .choices {
+      margin-top: 30px;
+    }
+
+    .choice {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .choice:hover {
+      background-color: #005fa3;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .link {
+      margin-top: 20px;
+      word-break: break-word;
+      color: #0077cc;
+    }
+
+    a {
+      color: #0077cc;
+      text-decoration: underline;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #333;
+      color: white;
+    }
+
+    body.dark-mode h1 {
+      color: #00d1b2;
+    }
+
+    body.dark-mode .choice {
+      background-color: #00d1b2;
+    }
+
+    body.dark-mode .choice:hover {
+      background-color: #009b8c;
+    }
+
+    body.dark-mode #result {
+      color: #fff;
+    }
+
+    body.dark-mode .link a {
+      color: #00d1b2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Rock Paper Scissors PvP 🎮</h1>
+
+  <div id="game">
+    <div id="instruction">Choose your move:</div>
+
+    <div class="choices">
+      <button class="choice" onclick="choose('rock')">🪨 Rock</button>
+      <button class="choice" onclick="choose('paper')">📄 Paper</button>
+      <button class="choice" onclick="choose('scissors')">✂️ Scissors</button>
+    </div>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    // Check for the dark theme using Telegram's WebApp API
+    const isDarkMode = tg.colorScheme === 'dark';
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Check if the URL has "p1" parameter (player 1 move)
+    const urlParams = new URLSearchParams(window.location.search);
+    const p1Choice = urlParams.get('p1');
+
+    function choose(p2Choice) {
+      if (p1Choice) {
+        // Player 2 plays -> compare choices
+        let resultText = `Opponent chose: ${p1Choice}\nYou chose: ${p2Choice}`;
+
+        if (p1Choice === p2Choice) {
+          resultText += "\nResult: It's a tie!";
+        } else if (
+          (p1Choice === 'rock' && p2Choice === 'scissors') ||
+          (p1Choice === 'paper' && p2Choice === 'rock') ||
+          (p1Choice === 'scissors' && p2Choice === 'paper')
+        ) {
+          resultText += "\nResult: You lose!";
+        } else {
+          resultText += "\nResult: You win!";
+        }
+
+        document.getElementById('game').style.display = 'none';
+        document.getElementById('result').innerText = resultText;
+      } else {
+        // First player: generate link for second player
+        const currentUrl = window.location.origin + window.location.pathname;
+        const shareLink = `${currentUrl}?p1=${p2Choice}`;
+
+        document.getElementById('instruction').innerText = "Send this link to your opponent:";
+        document.querySelector('.choices').style.display = 'none';
+
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'link';
+        linkDiv.innerHTML = `<p><a href="${shareLink}">${shareLink}</a></p>`;
+        document.getElementById('game').appendChild(linkDiv);
+      }
+    }
+  </script>
+
+</body>
+</html>
